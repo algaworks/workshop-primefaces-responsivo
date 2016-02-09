@@ -1,0 +1,8 @@
+.DS_Store
+.metadata
+.recommenders/**
+Servers/**
+RemoteSystemsTempFiles/**
+usando-o-layout/**
+primefaces-responsivo/**
+**/target/**

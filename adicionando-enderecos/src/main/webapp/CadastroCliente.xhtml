@@ -1,0 +1,130 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/Layout.xhtml">
+	
+	<ui:define name="content">
+		<h1 class="aw-page-title">Cadastro de cliente</h1>
+		
+		<h:form id="frm">
+			<p:toolbar>
+				<p:toolbarGroup>
+					<p:commandButton value="Salvar" />
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:commandButton value="Novo" />
+					<p:button value="Pesquisa" outcome="PesquisaClientes" />
+				</p:toolbarGroup>
+			</p:toolbar>
+			
+			<div class="ui-fluid">
+				<p:tabView style="margin-top: 20px" id="tabView">
+					<p:tab title="Dados básicos">
+						<p:panelGrid columns="4" layout="grid"
+								columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
+								styleClass="panelgrid-noborder">
+							<p:outputLabel value="Nome" for="nome" />
+							<p:inputText id="nome" required="true" />
+							
+							<p:outputLabel value="CPF" for="cpf" />
+							<p:inputMask id="cpf" required="true" mask="999.999.999-99"
+								style="width: 70%" />
+							
+							<p:outputLabel value="Telefone" for="telefone" />
+							<p:inputText id="telefone" required="true" />
+							
+							<p:outputLabel value="Celular" for="celular" />
+							<p:inputText id="celular" />
+							
+							<p:outputLabel value="E-mail" for="email" />
+							<p:inputText id="email" required="true" />
+							
+							<p:outputLabel value="Estado" for="estado" />
+							<p:selectOneMenu id="estado">
+								<f:selectItem itemLabel="Selecione" />
+								<f:selectItem itemLabel="Minas Gerais" itemValue="Minas Gerais" />
+								<f:selectItem itemLabel="São Paulo" itemValue="São Paulo" />
+							</p:selectOneMenu>
+							
+							<p:outputLabel value="Data de nascimento" for="dataNascimento" />
+							<p:inputText id="dataNascimento" />
+							
+							<p:outputLabel/>
+							<p:selectBooleanCheckbox itemLabel="Parcelamento liberado" />
+						</p:panelGrid>
+					</p:tab>
+					
+					<p:tab title="Endereços">
+						<p:commandButton value="Novo endereço" style="width: auto"
+							oncomplete="PF('novoEnderecoDialog').show()"
+							action="#{clientesManager.novoEndereco}"
+							process="@this" update="frm:novoEnderecoDialog">
+							<p:resetInput target="frm:novoEnderecoDialog" />
+						</p:commandButton>
+						
+						<p:dataTable value="#{clientesManager.clienteEdicao.enderecos}" var="endereco"
+							emptyMessage="O cliente ainda não possui endereços"
+							style="margin-top: 10px" id="enderecosTable">
+							<p:column headerText="Logradouro">
+								<h:outputText value="#{endereco.logradouro}"/>
+							</p:column>
+							<p:column headerText="Número">
+								<h:outputText value="#{endereco.numero}"/>
+							</p:column>
+							<p:column headerText="Bairro" priority="4">
+								<h:outputText value="#{endereco.bairro}"/>
+							</p:column>
+							<p:column headerText="Cidade" priority="6">
+								<h:outputText value="#{endereco.cidade}"/>
+							</p:column>
+						</p:dataTable>
+					</p:tab>
+					
+					<p:tab title="Observações">
+						<p:inputTextarea rows="7" />
+					</p:tab>
+				</p:tabView>
+			</div>
+			
+			<p:dialog widgetVar="novoEnderecoDialog" id="novoEnderecoDialog"
+				header="Novo endereço" resizable="false" responsive="true">
+				
+				<h:panelGroup id="novoEnderecoPanel" layout="block" styleClass="ui-fluid">
+					<p:messages autoUpdate="false" />
+				
+					<p:panelGrid columns="2" layout="grid" styleClass="panelgrid-noborder"
+							columnClasses="ui-grid-col-4, ui-grid-col-8">
+						<p:outputLabel value="Logradouro" for="logradouro" />
+						<p:inputText id="logradouro" required="true"
+							value="#{clientesManager.enderecoEdicao.logradouro}" />
+						
+						<p:outputLabel value="Número" for="numero" />
+						<p:inputText id="numero" required="true"
+							value="#{clientesManager.enderecoEdicao.numero}" />
+						
+						<p:outputLabel value="Bairro" for="bairro" />
+						<p:inputText id="bairro"
+							value="#{clientesManager.enderecoEdicao.bairro}" />
+						
+						<p:outputLabel value="Cidade" for="cidade" />
+						<p:inputText id="cidade"
+							value="#{clientesManager.enderecoEdicao.cidade}" />
+						
+						<p:outputLabel/>
+						<p:commandButton value="Adicionar" process="novoEnderecoDialog"
+								update="tabView:enderecosTable novoEnderecoPanel"
+								oncomplete="if (!args.validationFailed) PF('novoEnderecoDialog').hide()">
+							<p:collector value="#{clientesManager.enderecoEdicao}"
+								addTo="#{clientesManager.clienteEdicao.enderecos}" />
+						</p:commandButton>
+					</p:panelGrid>
+				</h:panelGroup>
+				
+			</p:dialog>
+			
+		</h:form>
+	</ui:define>
+	
+</ui:composition>
